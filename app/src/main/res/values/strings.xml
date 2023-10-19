@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">GraphOnKotlin</string>
+    <string name="app_name">DroGraph</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="alert_to_add_weight_title">Добавьте вес вершине</string>
+    <string name="accept_rus">Принять</string>
+    <string name="deny_rus">Отмена</string>
+    <string name="remind_weight">Укажите вес</string>
 </resources>
