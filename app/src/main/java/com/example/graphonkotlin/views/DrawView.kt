@@ -88,8 +88,10 @@ class DrawView(context: Context?) : View(context) {
             }
         }
 
-        @SuppressLint("DrawAllocation")
         override fun onDraw(canvas: Canvas) {
+            Log.d("tagg","ssss draw");
+
+
             for (vertex in vertexes) {
                 canvas.drawCircle(vertex.x, vertex.y, 50f, paintVertex)
             }
@@ -153,11 +155,13 @@ class DrawView(context: Context?) : View(context) {
 
         override fun onTouchEvent(event: MotionEvent): Boolean {
 
+
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                if (ActionsAdapter.currentStates.equals(States.ADD_POINT)) {
-                    touchX = event.getX()
-                    touchY = event.getY()
+
+                if (ActionsAdapter.currentStates == States.ADD_POINT) {
+                    touchX = event.x
+                    touchY = event.y
                     var number = 1
 
                     if (!vertexes.isEmpty()) {
