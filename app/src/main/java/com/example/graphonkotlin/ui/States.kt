@@ -1,4 +1,4 @@
-package com.example.graphonkotlin.utils
+package com.example.graphonkotlin.ui
 
 enum class States(var position: Int) {
     ADD_POINT(0), ADD_LINE(1), DELETE_LINE(2), DELETE_POINT(3), CHECK_POINT(9), CHECK_WEIGHT(10);

@@ -1,4 +1,4 @@
-package com.example.graphonkotlin.utils
+package com.example.graphonkotlin.ui
 
 object Utils {
     fun digitInNumber(number: Int): Int {

@@ -1,13 +1,14 @@
-package com.example.graphonkotlin.views
+package com.example.graphonkotlin.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.MotionEvent
@@ -16,22 +17,118 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import com.example.graphonkotlin.R
-import com.example.graphonkotlin.adapters.ActionsAdapter
-import com.example.graphonkotlin.entities.Edge
-import com.example.graphonkotlin.entities.Graph
-import com.example.graphonkotlin.entities.Vertex
-import com.example.graphonkotlin.utils.States
-import com.example.graphonkotlin.utils.Utils
+import com.example.graphonkotlin.ui.adapters.ActionsAdapter
+import com.example.graphonkotlin.ui.entities.Edge
+import com.example.graphonkotlin.ui.entities.Graph
+import com.example.graphonkotlin.ui.entities.Vertex
+import com.example.graphonkotlin.ui.services.FIleService
+import java.lang.Math.abs
 import java.util.function.BinaryOperator
-import kotlin.math.abs
 
-class DrawView(context: Context?) : View(context) {
+class MainActivity : AppCompatActivity() {
 
+
+    companion object{
+        lateinit var pathSave: Uri
+        lateinit var launcher : ActivityResultLauncher<Array<String>>
+        lateinit var launcherSave : ActivityResultLauncher<String>
+
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main_class)
+
+        launcher = registerForActivityResult<Array<String>, Uri>(
+            ActivityResultContracts.OpenDocument(), ActivityResultCallback<Uri> { url: Uri? ->
+                val fIleService = FIleService(this)
+                val view  = BlankFragment.viewTmp
+                val graphCode: String = fIleService.loadGraph(url!!, this)
+                        view?.loadGraph(Graph.loadGraph(graphCode))
+            }
+        )
+        launcherSave = registerForActivityResult<String, Uri>(
+            ActivityResultContracts.CreateDocument(), ActivityResultCallback<Uri> { url: Uri ->
+                val fIleService = FIleService(this)
+                val view  = BlankFragment.viewTmp
+                fIleService.saveGraph( view!!.graph, url)
+                pathSave = url
+            }
+        )
+
+
+        var recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val drawable1: Drawable? = getDrawable(R.drawable.addpoint)
+        val drawable2: Drawable? = getDrawable(R.drawable.addline)
+        val drawable3: Drawable? = getDrawable(R.drawable.deleteline)
+        val drawable4: Drawable? = getDrawable(R.drawable.deletepoint)
+        val drawable5: Drawable? = getDrawable(R.drawable.clear)
+        val drawable6: Drawable? = getDrawable(R.drawable.upload)
+        val drawable7: Drawable? = getDrawable(R.drawable.download)
+        val drawable8: Drawable? = getDrawable(R.drawable.sumpoints)
+        val drawable9: Drawable? = getDrawable(R.drawable.sumlines)
+        val drawable10: Drawable? = getDrawable(R.drawable.hasconnection)
+        val drawable11: Drawable? = getDrawable(R.drawable.wt)
+        val imageViews: MutableList<Drawable?> = ArrayList()
+        imageViews.add(drawable1)
+        imageViews.add(drawable2)
+        imageViews.add(drawable3)
+        imageViews.add(drawable4)
+        imageViews.add(drawable5)
+        imageViews.add(drawable6)
+        imageViews.add(drawable7)
+        imageViews.add(drawable8)
+        imageViews.add(drawable9)
+        imageViews.add(drawable10)
+        imageViews.add(drawable11)
+
+
+        val onStateClickListener: ActionsAdapter.OnStateClickListener = object : ActionsAdapter.OnStateClickListener{
+            override fun onStateClick(position: Int) {
+                ActionsAdapter.currentStates = States.getState(position)!!
+            }
+        }
+        recyclerView.adapter = ActionsAdapter(this, imageViews, onStateClickListener)
+
+    }
+
+
+
+
+
+    class myView (context: Context) : View(context){
+        private val paint = Paint()
         var currEdge: Edge? = null
         var vertexTmp: Vertex? = null
+        var launcher: ActivityResultLauncher<Array<String>>? = null
+        var launcherSave: ActivityResultLauncher<String>? = null
+        var pathSave: Uri? = null
+
+
+//        override fun onDraw(canvas: Canvas?) {
+//            super.onDraw(canvas)
+//
+//            paint.color = Color.RED
+//            paint.style = Paint.Style.FILL
+//
+//            // Рисуем круг на Canvas
+//            canvas!!.drawCircle(width / 2f, height / 2f, 100f, paint)
+//
+//            // Устанавливаем цвет и стиль для Paint
+//            paint.color = Color.BLUE
+//            paint.style = Paint.Style.STROKE
+//            paint.strokeWidth = 10f
+//
+//            // Рисуем прямоугольник на Canvas
+//            canvas!!.drawRect(50f, 50f, 200f, 200f, paint)
+//        }
 
 
 
@@ -112,15 +209,15 @@ class DrawView(context: Context?) : View(context) {
 
             val offset = 20
 
-            for (vertex in vertexes) {
-                canvas.drawText(
-                    "" + vertex.number,
-                    vertex.x -
-                            if (vertex.number >= 10) offset * (1 + (Utils.digitInNumber(vertex.number) - 1) / 10) else 0,
-                    vertex.y + offset,
-                    paintText
-                )
-            }
+//            for (vertex in vertexes) {
+//                canvas.drawText(
+//                    "" + vertex.number,
+//                    vertex.x -
+//                            if (vertex.number >= 10) offset * (1 + (Utils.digitInNumber(vertex.number) - 1) / 10) else 0,
+//                    vertex.y + offset,
+//                    paintText
+//                )
+//            }
 
 
             paintText.textSize = 100f
@@ -387,11 +484,11 @@ class DrawView(context: Context?) : View(context) {
                 return graph
             }
 
-        companion object {
-            var currEdge: Edge? = null
-            var vertexTmp: Vertex? = null
-            var launcher: ActivityResultLauncher<Array<String>>? = null
-            var launcherSave: ActivityResultLauncher<String>? = null
-            var pathSave: Uri? = null
-        }
+
+
+
+
     }
+}
+
+

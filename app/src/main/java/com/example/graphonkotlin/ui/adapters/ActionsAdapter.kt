@@ -1,4 +1,4 @@
-package com.example.graphonkotlin.adapters
+package com.example.graphonkotlin.ui.adapters
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -10,17 +10,18 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.graphonkotlin.R
-import com.example.graphonkotlin.services.FIleService
-import com.example.graphonkotlin.utils.States
-import com.example.graphonkotlin.views.BlankFragment
-import com.example.graphonkotlin.views.DrawView
+import com.example.graphonkotlin.ui.BlankFragment
+import com.example.graphonkotlin.ui.MainActivity
+import com.example.graphonkotlin.ui.States
+import com.example.graphonkotlin.ui.services.FIleService
 import java.lang.String
 import kotlin.Int
 import kotlin.arrayOf
 
 class ActionsAdapter(
     context: Context,
-    var imageViews: MutableList<Drawable?>
+    var imageViews: MutableList<Drawable?>,
+    onStateClickListener: OnStateClickListener
 ) : RecyclerView.Adapter<ActionsAdapter.FunctionsAdapterHolder?>() {
     interface OnStateClickListener {
         fun onStateClick(position: Int)
@@ -46,9 +47,10 @@ class ActionsAdapter(
     }
 
     override fun onBindViewHolder(holder: FunctionsAdapterHolder, position: Int) {
-        val view: DrawView? = BlankFragment.view
-        BlankFragment.view?.currEdge = null
-        BlankFragment.view?.vertexTmp = null
+
+        var view  = BlankFragment.viewTmp
+        BlankFragment.viewTmp?.currEdge = null
+        BlankFragment.viewTmp?.vertexTmp = null
 
         holder.kartinka.setImageDrawable(imageViews[position])
 
@@ -62,21 +64,21 @@ class ActionsAdapter(
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            if (position == 7) {
+            else if (position == 7) {
                 Toast.makeText(
                     context,
                     String.valueOf(view?.graph?.countVertex),
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            if (position == 6) {
+            else if (position == 6) {
                 val strings = arrayOf("text/*")
-               // MainActivity.launcher.launch(strings)
+                MainActivity.launcher.launch(strings)
             }
-            if (position == 5) {
-               // MainActivity.launcherSave.launch("graph.txt")
+            else if (position == 5) {
+                MainActivity.launcherSave.launch("graph.txt")
             }
-            if (position == 4) {
+            else if (position == 4) {
                 view?.clear()
             } else {
                 currentStates = States.getState(position)!!

@@ -1,6 +1,5 @@
-package com.example.graphonkotlin.entities
+package com.example.graphonkotlin.ui.entities
 
-import androidx.compose.ui.text.font.FontWeight
 
 data class Edge(var vertex1: Vertex? = null, var vertex2: Vertex? = null, var weight: Int = 0) {
 

@@ -1,8 +1,8 @@
-package com.example.graphonkotlin.entities
+package com.example.graphonkotlin.ui.entities
 
 import android.util.Log
-import com.example.graphonkotlin.views.BlankFragment
-import com.example.graphonkotlin.views.DrawView
+import android.view.View
+import com.example.graphonkotlin.ui.BlankFragment
 
 data class Graph(var edgeList: MutableList<Edge> = ArrayList<Edge>(), var vertexList: MutableList<Vertex> = ArrayList<Vertex>()) {
     override fun toString(): String {
@@ -39,15 +39,18 @@ data class Graph(var edgeList: MutableList<Edge> = ArrayList<Edge>(), var vertex
     companion object {
         fun loadGraph(string: String): Graph {
             val graph = Graph()
-            val view: DrawView? = BlankFragment.view
+            val view: View? = BlankFragment.viewTmp
             val width: Int = view!!.width
             val height: Int = view.height
             val edges = string.split("\n")
 
+            var i =0;
+            var size = edges.size-1
             for (edge in edges) {
                 val edgeTmp = Edge()
                 val edgeStr = edge.split(" ")
-
+                if(i==size) break
+                Log.d("taggg", "str is " + edges.size + " " + i)
                 var vertex1 = Vertex(edgeStr[0].toInt())
                 var vertex2 = Vertex(edgeStr[1].toInt())
 
@@ -83,6 +86,7 @@ data class Graph(var edgeList: MutableList<Edge> = ArrayList<Edge>(), var vertex
                 edgeTmp.vertex2 = vertex2
                 edgeTmp.weight = edgeStr[2].toInt()
                 graph.edgeList.add(edgeTmp)
+                i++
             }
             return graph
         }

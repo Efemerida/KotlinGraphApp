@@ -1,4 +1,4 @@
-package com.example.graphonkotlin.entities
+package com.example.graphonkotlin.ui.entities
 
 data class Vertex(var x: Float, var y:Float, var radius: Int, val number: Int) {
 

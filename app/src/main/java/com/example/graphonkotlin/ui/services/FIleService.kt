@@ -1,12 +1,12 @@
-package com.example.graphonkotlin.services
+package com.example.graphonkotlin.ui.services
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-import com.example.graphonkotlin.entities.Graph
+import com.example.graphonkotlin.ui.entities.Graph
 import java.io.BufferedReader
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStreamReader
 import java.util.Objects
 
@@ -36,6 +36,7 @@ class FIleService(val context: Context) {
             pfd?.close()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun readTextFromUri(uri: Uri, context: Context): String {
         val stringBuilder = StringBuilder()
         context.contentResolver.openInputStream(uri).use { inputStream ->
@@ -43,13 +44,10 @@ class FIleService(val context: Context) {
                 InputStreamReader(Objects.requireNonNull(inputStream))
             ).use { reader ->
                 var line: String
-                while (reader.readLine().also { line = it } != null) {
-                    stringBuilder.append(
-                        """
-    $line
-    
-    """.trimIndent()
-                    )
+                while (true) {
+                    var line: String? = reader.readLine() ?: break;
+                    stringBuilder.append(line)
+                    stringBuilder.append("\n")
                 }
             }
         }
