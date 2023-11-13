@@ -9,7 +9,9 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.InputType
+import android.text.Spanned
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -76,6 +78,7 @@ class MainActivity : AppCompatActivity() {
         val drawable9: Drawable? = getDrawable(R.drawable.sumlines)
         val drawable10: Drawable? = getDrawable(R.drawable.hasconnection)
         val drawable11: Drawable? = getDrawable(R.drawable.wt)
+        val drawable12: Drawable? = getDrawable(R.drawable.path)
         val imageViews: MutableList<Drawable?> = ArrayList()
         imageViews.add(drawable1)
         imageViews.add(drawable2)
@@ -88,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         imageViews.add(drawable9)
         imageViews.add(drawable10)
         imageViews.add(drawable11)
+        imageViews.add(drawable12)
 
 
         val onStateClickListener: ActionsAdapter.OnStateClickListener = object : ActionsAdapter.OnStateClickListener{
@@ -140,6 +144,9 @@ class MainActivity : AppCompatActivity() {
         var bitmap: Bitmap
         var all: Bitmap
 
+        var vertexesToDraw: MutableList<Vertex> = ArrayList<Vertex>()
+        var edgeToDraw: MutableList<Edge> = ArrayList<Edge>()
+
         var vertexes: MutableList<Vertex> = ArrayList<Vertex>()
         var edges: MutableList<Edge> = ArrayList<Edge>()
 
@@ -148,6 +155,9 @@ class MainActivity : AppCompatActivity() {
         val paintVertex = Paint()
         val paintText = Paint()
         val paintLine = Paint()
+        val paintTextNumber = Paint()
+        val paintPath = Paint()
+        val paintPathVertex = Paint()
 
         init {
             val config = Bitmap.Config.ARGB_8888
@@ -162,8 +172,17 @@ class MainActivity : AppCompatActivity() {
             paintText.color = Color.YELLOW
             paintText.textSize = 70f
 
+            paintTextNumber.color = Color.YELLOW
+            paintTextNumber.textSize = 50f
+
             paintLine.color = Color.RED
             paintLine.strokeWidth = 23f
+
+            paintPathVertex.color = Color.BLUE
+            paintPathVertex.isAntiAlias = true
+
+            paintPath.color = Color.BLUE
+            paintPath.strokeWidth = 20f
         }
 
         fun collectInput(edt: EditText?): String {
@@ -207,17 +226,20 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            val offset = 20
+            val offset = 30
 
-//            for (vertex in vertexes) {
-//                canvas.drawText(
-//                    "" + vertex.number,
-//                    vertex.x -
-//                            if (vertex.number >= 10) offset * (1 + (Utils.digitInNumber(vertex.number) - 1) / 10) else 0,
-//                    vertex.y + offset,
-//                    paintText
-//                )
-//            }
+            for (vertex in vertexes) {
+                if(vertex.number!=-1){
+                    canvas.drawText(
+                        "" + vertex.number,
+                        vertex.x -
+                                if (vertex.number >= 10) offset * (1 + (Utils.digitInNumber(vertex.number) - 1) / 10) else 0,
+                        vertex.y + offset,
+                        paintTextNumber
+                    )
+                }
+
+            }
 
 
             paintText.textSize = 100f
@@ -228,6 +250,18 @@ class MainActivity : AppCompatActivity() {
                     textCoords[0].toFloat(),
                     textCoords[1].toFloat(),
                     paintText
+                )
+            }
+            for (vertex in vertexesToDraw){
+                canvas.drawCircle(vertex.x, vertex.y, 48f, paintPathVertex)
+            }
+            for (edge in edgeToDraw) {
+                canvas.drawLine(
+                    edge.vertex1!!.x,
+                    edge.vertex1!!.y,
+                    edge.vertex2!!.x,
+                    edge.vertex2!!.y,
+                    paintPath
                 )
             }
 
@@ -467,6 +501,29 @@ class MainActivity : AppCompatActivity() {
                             vertexTmp = null
                         }
                     }
+                }else if(ActionsAdapter.currentStates.equals(States.CHECK_PATH) and !vertexes.isEmpty()){
+                    val alertWeight = AlertDialog.Builder(this.context)
+                    val edt = EditText(this.context)
+                    edt.filters= arrayOf(Utils.InputFilterMinMax(1,vertexes.count()))
+                    alertWeight.setTitle(R.string.alert_to_set_amount_title)
+                    alertWeight.setView(edt)
+                    val layoutalert = LinearLayout(this.context)
+                    layoutalert.setOrientation(LinearLayout.VERTICAL)
+                    layoutalert.addView(edt)
+                    alertWeight.setView(layoutalert)
+                    alertWeight.setPositiveButton(
+                        R.string.accept_rus
+                    ) { dialog, which ->
+                        drawPath(edt)
+                        invalidate()
+                    }
+                    alertWeight.setNegativeButton(
+                        R.string.deny_rus
+                    ) { dialog, which ->
+                        dialog.cancel()
+                        invalidate()
+                    }
+                    alertWeight.show()
                 }
             }
             return true
@@ -483,11 +540,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 return graph
             }
+        fun drawPath(edt: EditText?) {
+            val vertexamount = edt?.text.toString().toInt()
+            val vertexNumArray = (1..vertexes.count()).shuffled().take(vertexamount).toList()
+            vertexesToDraw = vertexes.filter { vertex -> vertexNumArray.contains(vertex.number) }.toMutableList()
 
+            for (i in 0 until vertexesToDraw.size-1){
+                edgeToDraw.add(Edge(vertexesToDraw.get(i),vertexesToDraw.get(i+1)))
+            }
 
-
-
-
+        }
     }
 }
 

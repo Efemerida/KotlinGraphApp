@@ -43,7 +43,7 @@ class ActionsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return 11
+        return 12
     }
 
     override fun onBindViewHolder(holder: FunctionsAdapterHolder, position: Int) {
@@ -82,6 +82,7 @@ class ActionsAdapter(
                 view?.clear()
             } else {
                 currentStates = States.getState(position)!!
+                Log.d("asda", currentStates.toString());
             }
         }
     }

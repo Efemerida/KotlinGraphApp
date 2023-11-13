@@ -1,7 +1,7 @@
 package com.example.graphonkotlin.ui
 
 enum class States(var position: Int) {
-    ADD_POINT(0), ADD_LINE(1), DELETE_LINE(2), DELETE_POINT(3), CHECK_POINT(9), CHECK_WEIGHT(10);
+    ADD_POINT(0), ADD_LINE(1), DELETE_LINE(2), DELETE_POINT(3), CHECK_POINT(9), CHECK_WEIGHT(10),CHECK_PATH(11);
 
     companion object {
         fun getState(position: Int): States? {
@@ -11,6 +11,7 @@ enum class States(var position: Int) {
             if (position == 2) return DELETE_LINE
             if (position == 9) return CHECK_POINT
             if (position == 10) return CHECK_WEIGHT
+            if(position == 11) return CHECK_PATH
             else return null
         }
     }
