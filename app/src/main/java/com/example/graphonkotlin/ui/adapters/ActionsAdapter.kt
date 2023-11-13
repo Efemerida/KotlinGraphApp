@@ -6,13 +6,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.graphonkotlin.R
 import com.example.graphonkotlin.ui.BlankFragment
 import com.example.graphonkotlin.ui.MainActivity
 import com.example.graphonkotlin.ui.States
+import com.example.graphonkotlin.ui.Utils
 import com.example.graphonkotlin.ui.services.FIleService
 import java.lang.String
 import kotlin.Int
@@ -80,7 +84,33 @@ class ActionsAdapter(
             }
             else if (position == 4) {
                 view?.clear()
-            } else {
+
+            }else if(position == 11){
+                val alertWeight = AlertDialog.Builder(this.context)
+                val edt = EditText(this.context)
+                edt.filters= arrayOf(Utils.InputFilterMinMax(1, view?.vertexes?.size ?: 0))
+                alertWeight.setTitle(R.string.alert_to_set_amount_title)
+                alertWeight.setView(edt)
+                val layoutalert = LinearLayout(this.context)
+                layoutalert.setOrientation(LinearLayout.VERTICAL)
+                layoutalert.addView(edt)
+                alertWeight.setView(layoutalert)
+                alertWeight.setPositiveButton(
+                    R.string.accept_rus
+                ) { dialog, which ->
+                    view?.drawPath(edt)
+                    view?.checkPath()
+                    view?.invalidate()
+                }
+                alertWeight.setNegativeButton(
+                    R.string.deny_rus
+                ) { dialog, which ->
+                    dialog.cancel()
+                    view?.invalidate()
+                }
+                alertWeight.show()
+            }
+            else {
                 currentStates = States.getState(position)!!
                 Log.d("asda", currentStates.toString());
             }

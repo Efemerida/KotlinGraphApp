@@ -502,28 +502,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }else if(ActionsAdapter.currentStates.equals(States.CHECK_PATH) and !vertexes.isEmpty()){
-                    val alertWeight = AlertDialog.Builder(this.context)
-                    val edt = EditText(this.context)
-                    edt.filters= arrayOf(Utils.InputFilterMinMax(1,vertexes.count()))
-                    alertWeight.setTitle(R.string.alert_to_set_amount_title)
-                    alertWeight.setView(edt)
-                    val layoutalert = LinearLayout(this.context)
-                    layoutalert.setOrientation(LinearLayout.VERTICAL)
-                    layoutalert.addView(edt)
-                    alertWeight.setView(layoutalert)
-                    alertWeight.setPositiveButton(
-                        R.string.accept_rus
-                    ) { dialog, which ->
-                        drawPath(edt)
-                        invalidate()
-                    }
-                    alertWeight.setNegativeButton(
-                        R.string.deny_rus
-                    ) { dialog, which ->
-                        dialog.cancel()
-                        invalidate()
-                    }
-                    alertWeight.show()
+
                 }
             }
             return true
@@ -549,6 +528,25 @@ class MainActivity : AppCompatActivity() {
                 edgeToDraw.add(Edge(vertexesToDraw.get(i),vertexesToDraw.get(i+1)))
             }
 
+        }
+        fun checkPath(){
+            for (edge1 in edgeToDraw){
+                val tocheck=edges.filter { edge -> (edge.vertex1?.number==edge1.vertex1?.number && edge.vertex2?.number==edge1.vertex2?.number) ||
+                        (edge.vertex2?.number== edge1.vertex1?.number &&edge.vertex1?.number==edge1.vertex2?.number)}
+                if(tocheck.isEmpty()){
+                    Toast.makeText(
+                        context,
+                        "Не часть пути",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    break
+                }
+            }
+            Toast.makeText(
+                context,
+                "Часть пути",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }
