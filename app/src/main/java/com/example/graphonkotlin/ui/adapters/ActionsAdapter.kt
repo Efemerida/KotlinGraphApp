@@ -47,7 +47,7 @@ class ActionsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return 12
+        return 13
     }
 
     override fun onBindViewHolder(holder: FunctionsAdapterHolder, position: Int) {
@@ -61,6 +61,7 @@ class ActionsAdapter(
 
         holder.itemView.setOnClickListener {
             Log.d("tagg",""+position);
+
             if (position == 8) {
                 Toast.makeText(
                     context,
@@ -76,6 +77,7 @@ class ActionsAdapter(
                 ).show()
             }
             else if (position == 6) {
+                view?.clearpath()
                 val strings = arrayOf("text/*")
                 MainActivity.launcher.launch(strings)
             }
@@ -83,9 +85,12 @@ class ActionsAdapter(
                 MainActivity.launcherSave.launch("graph.txt")
             }
             else if (position == 4) {
+                view?.clearpath()
                 view?.clear()
 
+
             }else if(position == 11){
+                view?.clearpath()
                 val alertWeight = AlertDialog.Builder(this.context)
                 val edt = EditText(this.context)
                 edt.filters= arrayOf(Utils.InputFilterMinMax(1, view?.vertexes?.size ?: 0))
@@ -109,8 +114,11 @@ class ActionsAdapter(
                     view?.invalidate()
                 }
                 alertWeight.show()
+            }else if(position == 12){
+                view?.clearpath()
             }
             else {
+                view?.clearpath()
                 currentStates = States.getState(position)!!
                 Log.d("asda", currentStates.toString());
             }

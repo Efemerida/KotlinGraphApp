@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         val drawable10: Drawable? = getDrawable(R.drawable.hasconnection)
         val drawable11: Drawable? = getDrawable(R.drawable.wt)
         val drawable12: Drawable? = getDrawable(R.drawable.path)
+        val drawable13: Drawable? = getDrawable(R.drawable.clearpath)
         val imageViews: MutableList<Drawable?> = ArrayList()
         imageViews.add(drawable1)
         imageViews.add(drawable2)
@@ -92,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         imageViews.add(drawable10)
         imageViews.add(drawable11)
         imageViews.add(drawable12)
+        imageViews.add(drawable13)
 
 
         val onStateClickListener: ActionsAdapter.OnStateClickListener = object : ActionsAdapter.OnStateClickListener{
@@ -273,6 +275,11 @@ class MainActivity : AppCompatActivity() {
         fun clear() {
             edges.clear()
             vertexes.clear()
+            invalidate()
+        }
+        fun clearpath() {
+            edgeToDraw.clear()
+            vertexesToDraw.clear()
             invalidate()
         }
 
@@ -536,15 +543,15 @@ class MainActivity : AppCompatActivity() {
                 if(tocheck.isEmpty()){
                     Toast.makeText(
                         context,
-                        "Не часть пути",
+                        "Созданного пути нет в графе",
                         Toast.LENGTH_SHORT
                     ).show()
-                    break
+                    return
                 }
             }
             Toast.makeText(
                 context,
-                "Часть пути",
+                "Созданный путь является частью графа",
                 Toast.LENGTH_SHORT
             ).show()
         }
